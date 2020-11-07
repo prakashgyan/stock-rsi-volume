@@ -10,8 +10,10 @@ Is there a sudden change that needed action.
 
 The project is on very early Implementation and any feedback is welcomed 
 
+### _Any type of contribution is most welcomed_
 
-## How to use 
+
+#### How to use 
 
 I will make a Web version of this app, but for now:
 
