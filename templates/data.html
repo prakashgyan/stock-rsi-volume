@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>RSI CALCULATOR</title>
+{% endblock %}
+
+{% block body %}
+<div class = 'content'>
+    <h1 style='text-align:center'> RSI CALCULATOR</h1>
+
+
+        <h5 style='text-align:center; color:red'>Time of Request : {{ timeofevent }}</h5>
+        <div class="form">
+            <form action="/" method="POST">
+                <button type="submit">Refresh</button>
+            </form>
+        </div>
+        {% for table in tables %}
+        <!-- {{titles[loop.index]}} -->
+        {{ table|safe }}
+        {% endfor %}
+</div>
+
+
+{% endblock %}
