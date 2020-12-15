@@ -2,6 +2,8 @@
 
 **version 0.1**
 
+###### Web-app now deployed @ https://stonkscalculations.herokuapp.com/
+
 This is a RSI calculator and Volume Ratio Calculator using yfinance API.
 https://pypi.org/project/yfinance/
 
