@@ -1,11 +1,12 @@
 import yfinance as yf
 import numpy as np
 import pandas as pd
+from datetime import datetime
 
 pd.set_option('display.max_rows', 1000)
 pd.set_option('display.max_columns', 20)
 
-companies = pd.read_csv('inputs_files/Yahoo_Company_codes.csv')
+companies = pd.read_csv('Yahoo_Company_codes.csv')
 # Dropping Description column is all values are null
 if companies.Description.notnull().sum() == 0: companies.drop('Description', axis=1, inplace=True)
 
@@ -13,12 +14,11 @@ if companies.Description.notnull().sum() == 0: companies.drop('Description', axi
 period = '12mo'  # time frame of data to get for calculation of RSI
 RSI_buy_sell = [25, 75]  # SELL if less than 25 buy when more than 75
 VOL_RATIO_buy_sell = 3  # BUY/SELL when volume ratio is more than 3
-
+# timeofevent = datetime.now().strftime("%c")
 
 def get_current_rsi(comp_cd):
     yahoo_ticker = yf.Ticker(comp_cd)
     ticker_last_X_days = yahoo_ticker.history(period=period)[['Close']]
-    # ticker_live = yahoo_ticker.info['ask']
     ticker_last_X_days['Change'] = ticker_last_X_days.Close.rolling(2).apply(lambda x: x[-1] - x[0])
     ticker_last_X_days['Upward_movement'] = ticker_last_X_days.Change.apply(lambda x: x if x > 0 else 0)
     ticker_last_X_days['Downward_movement'] = ticker_last_X_days.Change.apply(lambda x: -x if x < 0 else 0)
@@ -63,17 +63,26 @@ def volume(comp_cd):
     return float(volumes[-1] / volumes[-2])
 
 
-print('Querying for a very long list will take a minute or two\n')
+# print('Querying for a very long list will take a minute or two\n')
 
-print('Calculating RSI\'s')
-companies['RSI'] = companies.YahooCD.apply(get_current_rsi)
-# companies['beta'] = companies.YahooCD.apply(get_beta)
-print('Calculating buy/sell on RSI')
-companies['Buy/Sell'] = companies.RSI.apply(
-    lambda x: 'BUY' if x < RSI_buy_sell[0] else ('SELL' if x > RSI_buy_sell[1] else ''))
-print('Calculating Volume Ratio')
-companies['vol_Ratio'] = companies.YahooCD.apply(volume)
-print('Calculating buy/sell on Volume Ratio')
-companies['VR Purchase'] = companies.vol_Ratio.apply(lambda x: 'BUY/SELL' if x > VOL_RATIO_buy_sell else '')
-print('Done')
-print(companies)
+# companies['RSI'] = companies.YahooCD.apply(get_current_rsi)
+# # companies['beta'] = companies.YahooCD.apply(get_beta)
+# companies['Buy/Sell'] = companies.RSI.apply(
+#     lambda x: 'BUY' if x < RSI_buy_sell[0] else ('SELL' if x > RSI_buy_sell[1] else '-'))
+# companies['vol_Ratio'] = companies.YahooCD.apply(volume)
+# companies['VR Purchase'] = companies.vol_Ratio.apply(lambda x: 'BUY/SELL' if x > VOL_RATIO_buy_sell else '-')
+# companies.to_json('data_json.json')
+
+# table = companies
+
+def get_table(df = companies):
+    df['RSI'] = df.YahooCD.apply(get_current_rsi)
+    # companies['beta'] = companies.YahooCD.apply(get_beta)
+    df['Buy/Sell'] = df.RSI.apply(
+        lambda x: 'BUY' if x < RSI_buy_sell[0] else ('SELL' if x > RSI_buy_sell[1] else '-'))
+    df['vol_Ratio'] = df.YahooCD.apply(volume)
+    df['VR Purchase'] = df.vol_Ratio.apply(lambda x: 'BUY/SELL' if x > VOL_RATIO_buy_sell else '-')
+    # companies.to_json('data_json.json')
+    return df , datetime.now().strftime("%c")
+
+print(get_table())
