@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block body %}
+<div class = 'content'>
+    <h1 style='text-align:center' href='/'> RSI CALCULATOR</h1>
+
+
+        <h5 style='text-align:center; color:red'>Time of Request : {{ timeofevent }}</h5>
+        <div class="form">
+            <form action="/calculate" method="POST" style='text-align:center'>
+                <button type="submit">Refresh</button>
+                <button type="submit" formaction="/">Home</button>
+              </form>
+            
+        </div>
+        <div style='text-align:center; color:rgb(94, 85, 85)'>
+            <p>Period : {{ paramets[0] }} &nbsp RSI Range : [{{ paramets[1] }}] &nbsp Volume Ratio Trigger : {{ paramets[2] }}</p>
+        </div>
+        {% for table in tables %}
+        <!-- {{titles[loop.index]}} -->
+        {{ table|safe }}
+        {% endfor %}
+</div>
+
+
+{% endblock %}

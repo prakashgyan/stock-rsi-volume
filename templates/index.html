@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block body %}
+
+<div class = 'content'>
+    <h1 style='text-align:center'> RSI CALCULATOR</h1>
+    <!-- <p style='text-align:center'>Welcome to RSI and daily volume change ratio calculator  </p> -->
+    <form action="/calculate" method="POST" style='text-align:center'>
+        <label for="period">Period to consider:</label>
+        <input type="text" id="period" name="period" value="12mo"><br><br>
+        <label for="rsi_buy_sell">Buy and Sell for RSI:</label>
+        <input type="text" id="rsi_buy_sell" name="rsi_buy_sell" value="25,75"><br><br>
+        <label for="vol_ratio_trigger">Volume Ratio Trigger:</label>
+        <input type="text" id="vol_ratio_trigger" name="vol_ratio_trigger" value=3><br><br>
+        <button type="submit">Calculate</button>
+      </form> 
+</div>
+
+{% endblock %}
