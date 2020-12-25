@@ -45,6 +45,7 @@ if st.sidebar.button('Calculate', key='run'):
     with st.spinner('Wait for it...'):
         # st.success('Done!')
         companies, timeofevent, paramets = get_table(form_data)
+        st.markdown(f"<h5 style='text-align:center; color:red'>Time of Request : {timeofevent}</h5>", unsafe_allow_html=True)
         st.table(companies)
 else:
     st.markdown("""
