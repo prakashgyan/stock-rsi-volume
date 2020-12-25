@@ -7,7 +7,7 @@ import time
 """
 # RSI CALCULAOR
 """
-# st.header('RSI CALCULAOR')
+# st.header('RSI CALCULATOR')
 st.sidebar.title('Select Parameters:')
 
 option1 = st.sidebar.selectbox(
