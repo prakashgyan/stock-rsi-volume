@@ -2,6 +2,7 @@ import yfinance as yf
 import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
+import streamlit as st
 import time
 import timeit
 
@@ -20,9 +21,13 @@ if companies.Description.notnull().sum() == 0: companies.drop('Description', axi
 
 yahoo_tickers = yf.Tickers(' '.join([x for x in companies.YahooCD.values]))
 
-def get_current_rsi(yahoo_ticker, period='12mo'):
+
+def get_current_rsi(yahoo_ticker, period, my_bar):
     # yahoo_ticker = yf.Ticker(comp_cd)
-    ticker_last_X_days = yahoo_ticker.history(period=period)[['Close','Volume']]
+
+    my_bar.progress((yahoo_tickers.tickers.index(yahoo_ticker)+1) / len(yahoo_tickers.tickers))
+    # print(yahoo_tickers.tickers.index(yahoo_ticker), len(yahoo_tickers.tickers))
+    ticker_last_X_days = yahoo_ticker.history(period=period)[['Close', 'Volume']]
     ticker_last_X_days['Change'] = ticker_last_X_days.Close.rolling(2).apply(lambda x: x[-1] - x[0])
     ticker_last_X_days['Upward_movement'] = ticker_last_X_days.Change.apply(lambda x: x if x > 0 else 0)
     ticker_last_X_days['Downward_movement'] = ticker_last_X_days.Change.apply(lambda x: -x if x < 0 else 0)
@@ -63,7 +68,6 @@ def avg_mov_updater(df, upavg, downavg):
 #     return ''
 
 
-
 # print('Querying for a very long list will take a minute or two\n')
 
 # companies['RSI'] = companies.YahooCD.apply(get_current_rsi)
@@ -76,9 +80,11 @@ def avg_mov_updater(df, upavg, downavg):
 
 # table = companies
 
-def get_table(form_data, df = companies):
+def get_table(form_data, df=companies):
+    loadingbar_ph = st.empty()
+    loadingbar_ph.progress(0)
     # try:    
-    RSI_buy_sell = [int(x) for x in form_data['rsi_buy_sell'].split(',') ]
+    RSI_buy_sell = [int(x) for x in form_data['rsi_buy_sell'].split(',')]
     VOL_RATIO_buy_sell = int(form_data['vol_ratio_trigger'])
     period = form_data['period']
     # print(RSI_buy_sell,VOL_RATIO_buy_sell,period)
@@ -86,20 +92,22 @@ def get_table(form_data, df = companies):
     #     period = '1mo'  # time frame of data to get for calculation of RSI
     #     RSI_buy_sell = [25, 75]  # SELL if less than 25 buy when more than 75
     #     VOL_RATIO_buy_sell = 3  # BUY/SELL when volume ratio is more than 3
-    rsi_volume = pd.DataFrame([get_current_rsi(ticker,period) for ticker in yahoo_tickers.tickers], columns=['RSI','Vol_Ratio']).reindex(df.index)
-    df = pd.concat([df, rsi_volume],axis=1 )
+    rsi_volume = pd.DataFrame([get_current_rsi(ticker, period, loadingbar_ph) for ticker in yahoo_tickers.tickers],
+                              columns=['RSI', 'Vol_Ratio']).reindex(df.index)
+    df = pd.concat([df, rsi_volume], axis=1)
+    loadingbar_ph.empty()
     # df['RSI'] = df.YahooCD.apply(get_current_rsi)
     # # companies['beta'] = companies.YahooCD.apply(get_beta)
     df['Buy/Sell'] = df.RSI.apply(
         lambda x: 'BUY' if x < RSI_buy_sell[0] else ('SELL' if x > RSI_buy_sell[1] else '-'))
     # df['vol_Ratio'] = df.YahooCD.apply(volume)
-    df = df[['YahooCD','RSI','Buy/Sell','Vol_Ratio']]
+    df = df[['YahooCD', 'RSI', 'Buy/Sell', 'Vol_Ratio']]
     df['VR Purchase'] = df.Vol_Ratio.apply(lambda x: 'BUY/SELL' if x > VOL_RATIO_buy_sell else '-')
     # # companies.to_json('data_json.json')
-    timeofevent = datetime.utcnow() + timedelta(hours=5,minutes=30)
-    return df , f'[IST] {timeofevent.strftime("%c")}', [period,str(RSI_buy_sell)[1:-1],VOL_RATIO_buy_sell]
+    timeofevent = datetime.utcnow() + timedelta(hours=5, minutes=30)
+    return df, f'[IST] {timeofevent.strftime("%c")}', [period, str(RSI_buy_sell)[1:-1], VOL_RATIO_buy_sell]
 
 # if __name__ == '__main__':
 #     timea = time.time()
 #     print(get_table())
-#     print(f'Total Time taken : {time.time()-timea}')    
+#     print(f'Total Time taken : {time.time()-timea}')

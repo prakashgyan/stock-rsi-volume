@@ -2,8 +2,14 @@
 
 **version 0.1**
 
-###### Web-app now deployed @ https://stonkscalculations.herokuapp.com/
+Parameters: 
 
+
+
+###### Web-app now deployed @ https://stonkscalculations.herokuapp.com/
+#### Period : It is duration of stock Data to be considered for calculating RSI
+#### RSI Range : At what value to sell or Buy the stocks
+#### Volume Change Ratio : What ratio of volume change should trigger a Buy/Sell
 This is a RSI calculator and Volume Ratio Calculator using yfinance API.
 https://pypi.org/project/yfinance/
 
