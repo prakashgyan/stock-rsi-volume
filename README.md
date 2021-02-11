@@ -6,7 +6,7 @@ Parameters:
 
 
 
-###### Web-app now deployed @ https://stonkscalculations.herokuapp.com/
+###### Web-app now deployed @ https://rsicalculator.herokuapp.com/
 #### Period : It is duration of stock Data to be considered for calculating RSI
 #### RSI Range : At what value to sell or Buy the stocks
 #### Volume Change Ratio : What ratio of volume change should trigger a Buy/Sell
